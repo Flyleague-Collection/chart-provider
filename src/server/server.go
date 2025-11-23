@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"time"
 
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -109,25 +110,27 @@ func StartServer(content *content.ApplicationContent) {
 		logger.Warn("No rate limit was set, be aware of possible DDOS attacks")
 	}
 
-	//jwtMiddleware := echojwt.WithConfig(echojwt.Config{
-	//	SigningKey:    []byte(httpConfig.JWTSecret),
-	//	TokenLookup:   "header:Authorization:Bearer ",
-	//	SigningMethod: global.SigningMethod,
-	//	ErrorHandler: func(c echo.Context, err error) error {
-	//		var data *dto.ApiResponse[any]
-	//		switch {
-	//		case errors.Is(err, echojwt.ErrJWTMissing):
-	//			data = dto.NewApiResponse[any](dto.ErrMissingOrMalformedJwt, nil)
-	//		case errors.Is(err, echojwt.ErrJWTInvalid):
-	//			data = dto.NewApiResponse[any](dto.ErrInvalidOrExpiredJwt, nil)
-	//		default:
-	//			data = dto.NewApiResponse[any](dto.ErrUnknownJwtError, nil)
-	//		}
-	//		return data.Response(c)
-	//	},
-	//})
+	if httpConfig.JWTSecret != "" {
+		jwtMiddleware := echojwt.WithConfig(echojwt.Config{
+			SigningKey:    []byte(httpConfig.JWTSecret),
+			TokenLookup:   "header:Authorization:Bearer ",
+			SigningMethod: *global.SigningMethod,
+			ErrorHandler: func(c echo.Context, err error) error {
+				var data *dto.ApiResponse[any]
+				switch {
+				case errors.Is(err, echojwt.ErrJWTMissing):
+					data = dto.NewApiResponse[any](dto.ErrMissingOrMalformedJwt, nil)
+				case errors.Is(err, echojwt.ErrJWTInvalid):
+					data = dto.NewApiResponse[any](dto.ErrInvalidOrExpiredJwt, nil)
+				default:
+					data = dto.NewApiResponse[any](dto.ErrUnknownJwtError, nil)
+				}
+				return data.Response(c)
+			},
+		})
 
-	//e.Use(jwtMiddleware)
+		e.Use(jwtMiddleware)
+	}
 
 	logger.Info("Service initializing...")
 

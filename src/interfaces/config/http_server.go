@@ -106,9 +106,6 @@ func (h *HttpServerConfig) Verify() (bool, error) {
 	if h.RateLimit < 0 {
 		return false, fmt.Errorf("rate_limit must be positive")
 	}
-	if h.JWTSecret == "" {
-		return false, fmt.Errorf("jwt_secret is empty")
-	}
 	if ok, err := h.SSLConfig.Verify(); !ok {
 		return false, err
 	}

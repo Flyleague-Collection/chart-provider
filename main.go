@@ -23,6 +23,7 @@ func main() {
 	global.CheckStringEnv(global.EnvTokenCacheFile, global.TokenCacheFile)
 	global.CheckDurationEnv(global.EnvRequestTimeout, global.RequestTimeout)
 	global.CheckIntEnv(global.EnvGzipLevel, global.GzipLevel, 5)
+	global.CheckStringEnv(global.EnvSigningMethod, global.SigningMethod)
 
 	configManager := configImpl.NewManager()
 	if err := configManager.Init(); err != nil {

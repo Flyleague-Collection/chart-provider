@@ -12,6 +12,7 @@ var (
 	TokenCacheFile = flag.String("token_cache", "./token_cache", "Path to token cache file")
 	RequestTimeout = flag.Duration("request_timeout", 30*time.Second, "Request timeout")
 	GzipLevel      = flag.Int("gzip_level", 5, "GZip level")
+	SigningMethod  = flag.String("signing_method", "HS512", "Signing method")
 )
 
 const (
@@ -19,8 +20,6 @@ const (
 	ConfigVersion = "0.1.0"
 
 	BeginYear = 2025
-
-	SigningMethod = "HS512"
 
 	DefaultFilePermissions     = 0644
 	DefaultDirectoryPermission = 0755
@@ -32,4 +31,5 @@ const (
 	EnvTokenCacheFile = "TOKEN_CACHE_FILE"
 	EnvRequestTimeout = "REQUEST_TIMEOUT"
 	EnvGzipLevel      = "GZIP_LEVEL"
+	EnvSigningMethod  = "SIGNING_METHOD"
 )

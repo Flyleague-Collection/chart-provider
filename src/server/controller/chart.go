@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -30,7 +31,7 @@ type ChartController struct {
 	logger      logger.Interface
 	token       *TokenResponse
 	expiresIn   time.Time
-	initialized bool
+	initialized atomic.Bool
 	client      *http.Client
 }
 
@@ -70,7 +71,7 @@ func NewChartController(
 ) *ChartController {
 	manager := &ChartController{
 		logger:      logger.NewLoggerAdapter(lg, "TokenManager"),
-		initialized: false,
+		initialized: atomic.Bool{},
 	}
 	manager.getCachedFlushToken()
 	manager.client = &http.Client{
@@ -78,20 +79,23 @@ func NewChartController(
 			Proxy: http.ProxyFromEnvironment,
 		},
 	}
-	go func(m *ChartController) {
-		if m.token != nil && m.refreshAccessToken() {
-			m.logger.Info("Use cached flush token")
-			m.initialized = true
-			return
-		}
-		response, verifier := m.requestDeviceAuthorization()
-		if response == nil {
-			m.logger.Error("Request device authorization fail")
-			return
-		}
-		go m.pollForAccessToken(response.DeviceCode, verifier, response.Interval, response.ExpiresIn)
-	}(manager)
+	go manager.init()
 	return manager
+}
+
+func (m *ChartController) init() {
+	m.initialized.Store(false)
+	if m.token != nil && m.refreshAccessToken() {
+		m.logger.Info("Use cached flush token")
+		m.initialized.Store(true)
+		return
+	}
+	response, verifier := m.requestDeviceAuthorization()
+	if response == nil {
+		m.logger.Error("Request device authorization fail")
+		return
+	}
+	go m.pollForAccessToken(response.DeviceCode, verifier, response.Interval, response.ExpiresIn)
 }
 
 func (m *ChartController) getCachedFlushToken() {
@@ -226,7 +230,7 @@ func (m *ChartController) pollForAccessToken(deviceCode string, verifier string,
 				return
 			}
 			m.token = token
-			m.initialized = true
+			m.initialized.Store(true)
 			m.saveFlushTokenToFile(token.RefreshToken)
 			m.expiresIn = time.Now().Add(time.Duration(token.ExpiresIn) * time.Second)
 			m.logger.Info("Device authorization passed")
@@ -279,7 +283,7 @@ var (
 )
 
 func (m *ChartController) HandleProxy(c echo.Context) error {
-	if !m.initialized {
+	if !m.initialized.Load() {
 		return dto.NewApiResponse[any](ErrNotAvailable, nil).Response(c)
 	}
 
@@ -314,6 +318,8 @@ func (m *ChartController) HandleProxy(c echo.Context) error {
 
 	if resp.StatusCode == dto.HttpCodeUnauthorized.Code() {
 		m.logger.Error("HandleProxy Error: Token expired")
+		m.token = nil
+		go m.init()
 		return dto.NewApiResponse[any](ErrTokenExpired, nil).Response(c)
 	}
 
@@ -331,7 +337,7 @@ func (m *ChartController) HandleProxy(c echo.Context) error {
 }
 
 func (m *ChartController) getAccessToken() string {
-	if !m.initialized {
+	if !m.initialized.Load() || m.token == nil {
 		return ""
 	}
 	if time.Now().After(m.expiresIn) {
