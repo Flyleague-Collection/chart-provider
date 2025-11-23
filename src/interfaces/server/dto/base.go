@@ -6,14 +6,12 @@ import "github.com/labstack/echo/v4"
 type HttpCode int
 
 const (
-	HttpCodeOk               HttpCode = 200
-	HttpCodeBadRequest       HttpCode = 400
-	HttpCodeUnauthorized     HttpCode = 401
-	HttpCodePermissionDenied HttpCode = 403
-	HttpCodeNotFound         HttpCode = 404
-	HttpCodeConflict         HttpCode = 409
-	HttpCodeTooManyRequests  HttpCode = 429
-	HttpCodeInternalError    HttpCode = 500
+	HttpCodeOk              HttpCode = 200
+	HttpCodeBadRequest      HttpCode = 400
+	HttpCodeUnauthorized    HttpCode = 401
+	HttpCodeNotFound        HttpCode = 404
+	HttpCodeTooManyRequests HttpCode = 429
+	HttpCodeInternalError   HttpCode = 500
 )
 
 func (hc HttpCode) Code() int {
