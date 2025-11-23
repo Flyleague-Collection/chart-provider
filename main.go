@@ -2,7 +2,9 @@
 package main
 
 import (
+	"chart-provider/src/interfaces/content"
 	"chart-provider/src/interfaces/global"
+	"chart-provider/src/server"
 	"flag"
 	"fmt"
 	"time"
@@ -18,6 +20,9 @@ func main() {
 
 	global.CheckBoolEnv(global.EnvNoLogs, global.NoLogs)
 	global.CheckStringEnv(global.EnvConfigFilePath, global.ConfigFilePath)
+	global.CheckStringEnv(global.EnvTokenCacheFile, global.TokenCacheFile)
+	global.CheckDurationEnv(global.EnvRequestTimeout, global.RequestTimeout)
+	global.CheckIntEnv(global.EnvGzipLevel, global.GzipLevel, 5)
 
 	configManager := configImpl.NewManager()
 	if err := configManager.Init(); err != nil {
@@ -44,11 +49,13 @@ func main() {
 	cleaner := cleanerImpl.NewCleaner(logger)
 	cleaner.Init()
 
-	//applicationContent := content.NewApplicationContentBuilder().
-	//	SetConfigManager(configManager).
-	//	SetCleaner(cleaner).
-	//	SetLogger(logger).
-	//	Build()
+	applicationContent := content.NewApplicationContentBuilder().
+		SetConfigManager(configManager).
+		SetCleaner(cleaner).
+		SetLogger(logger).
+		Build()
+
+	go server.StartServer(applicationContent)
 
 	cleaner.Wait()
 }

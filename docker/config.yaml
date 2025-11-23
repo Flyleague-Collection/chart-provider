@@ -22,3 +22,54 @@ global:
     compress: true
     # 是否使用本地时间而不是UTC时间
     local_time: true
+
+# 服务配置
+server:
+  # http服务配置
+  http:
+    # 是否启动
+    enable: true
+    # 监听地址
+    host: 0.0.0.0
+    # 监听端口
+    port: 8080
+    # 请求体大小限制
+    # 置空表示不限制
+    body_limit: 5MB
+    # 请求频率限制(次/分钟)
+    # 0表示不限制
+    rate_limit: 20
+    # 代理类型
+    proxy_type: 0
+    # 允许的代理IP地址
+    # 本地回环地址、局域网地址和本地连接地址默认允许
+    trust_ips:
+      # 本地回环地址
+      # - "127.0.0.1/32"
+      # 局域网地址
+      # - "10.0.0.0/8"
+      # - "172.16.0.0/12"
+      # - "192.168.0.0/16"
+      # 本地连接地址
+      # - "169.254.0.0/16"
+      - "0.0.0.0/0"
+    # JWT密钥
+    jwt_secret: ""
+    # SSL配置
+    ssl:
+      # 是否启用SSL
+      enable: false
+      # SSL证书文件
+      cert: ""
+      # SSL密钥文件
+      key: ""
+      # 是否强制使用SSL
+      force_https: false
+      # HSTS配置
+      hsts:
+        # 是否启用HSTS
+        enable: false
+        # HSTS过期时间（秒）
+        max_age: 5184000
+        # 是否包含子域名
+        include_subdomains: false

@@ -9,6 +9,7 @@ type Verifiable interface {
 
 type Config struct {
 	GlobalConfig *GlobalConfig `yaml:"global"`
+	ServerConfig *ServerConfig `yaml:"server"`
 }
 
 func NewConfig() *Config {
@@ -22,6 +23,12 @@ func (c *Config) Verify() (bool, error) {
 		return false, fmt.Errorf("global config is nil")
 	}
 	if ok, err := c.GlobalConfig.Verify(); !ok {
+		return false, err
+	}
+	if c.ServerConfig == nil {
+		return false, fmt.Errorf("server config is nil")
+	}
+	if ok, err := c.ServerConfig.Verify(); !ok {
 		return false, err
 	}
 	return true, nil
