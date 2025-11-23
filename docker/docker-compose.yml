@@ -1,0 +1,23 @@
+services:
+  # 服务名
+  chart-provider:
+    # 使用的镜像
+    image: halfnothing/chart-provider:latest
+    # 容器名称
+    container_name: chart-provider
+    # 端口映射
+    # 宿主机端口:容器端口
+    networks:
+      - main
+    ports:
+      - "8080:8080"
+    # 挂载卷列表
+    volumes:
+      - ./logs:/chart-provider/logs
+      - ./config.yaml:/chart-provider/config.yaml
+    # 重启模式
+    restart: always
+
+networks:
+  main:
+    driver: bridge
