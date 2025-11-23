@@ -3,9 +3,13 @@
 [![ReleaseCard]][Release]![ReleaseDataCard]![LastCommitCard]  
 ![BuildStateCard]![ProjectLanguageCard]![ProjectLicense]
 
-ChartProvider 是一个基于 Go 语言开发的开源软件，用于提供航图查询  
-为了使用本项目，你首先需要一个订阅的Navigraph账号  
-如果你还没有Navigraph账号，可以访问[Navigraph官网](https://www.navigraph.com/)进行注册
+> ⚠️ **免责声明：本项目仅供学习和研究使用。
+> Navigraph的相关服务和数据可能受到版权限制，请用户在使用时遵守当地法律法规及服务条款。
+> 本项目不鼓励或支持任何侵犯知识产权的行为。**
+
+ChartProvider 是一个基于 Go 语言开发的开源软件，用于学习请求代理的实现原理。  
+为了学习本项目，你需要一个订阅的 Navigraph 账号。  
+如果你还没有 Navigraph 账号，可以访问 [Navigraph官网](https://www.navigraph.com/) 了解更多信息。
 
 ## 如何使用
 
@@ -158,6 +162,16 @@ MIT License
 Copyright © 2025 Half_nothing
 
 无附加条款。
+
+## 免责声明
+
+1. 本软件仅供个人学习和研究目的使用，严禁用于任何商业用途。
+2. 通过本软件获取或生成的任何内容，使用者应确保其使用方式符合相关法律法规，不得用于商业目的。
+3. 使用者应尊重所有相关的知识产权，包括但不限于版权、商标权等，并严格遵守第三方服务的最终用户许可协议（EULA）及服务条款。
+4. 本项目的开发者明确声明，提供此软件不构成对任何第三方软件许可限制、EULA 或其他合同条款的豁免或绕过授权。
+5. 任何因滥用本软件、非法使用本软件或其衍生作品而导致的法律责任和后果均由使用者自行承担，本软件的作者及维护者对此不承担任何责任。
+6. 本软件不对数据的准确性、完整性或适用性做出任何明示或暗示的保证，使用者应自行承担使用风险。
+7. 使用者理解并同意，使用本软件即表示接受本免责声明的所有条款和条件，如有异议请立即停止使用本软件。
 
 [ReleaseCard]: https://img.shields.io/github/v/release/Flyleague-Collection/chart-provider?style=for-the-badge&logo=github
 
